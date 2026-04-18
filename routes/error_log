@@ -1,0 +1,28 @@
+[03-May-2025 18:08:18 UTC] PHP Fatal error:  Uncaught Error: Class "Illuminate\Support\Facades\Route" not found in /home3/nexorain/aqonpj.nexorainfo.com/routes/admin.php:37
+Stack trace:
+#0 {main}
+  thrown in /home3/nexorain/aqonpj.nexorainfo.com/routes/admin.php on line 37
+[03-May-2025 18:08:29 UTC] PHP Fatal error:  Uncaught Error: Class "Illuminate\Support\Facades\Route" not found in /home3/nexorain/aqonpj.nexorainfo.com/routes/installer.php:5
+Stack trace:
+#0 {main}
+  thrown in /home3/nexorain/aqonpj.nexorainfo.com/routes/installer.php on line 5
+[03-May-2025 18:08:59 UTC] PHP Fatal error:  Uncaught Error: Class "Illuminate\Support\Facades\Route" not found in /home3/nexorain/aqonpj.nexorainfo.com/routes/api.php:20
+Stack trace:
+#0 {main}
+  thrown in /home3/nexorain/aqonpj.nexorainfo.com/routes/api.php on line 20
+[03-May-2025 18:10:22 UTC] PHP Fatal error:  Uncaught Error: Class "Illuminate\Support\Facades\Route" not found in /home3/nexorain/aqonpj.nexorainfo.com/routes/jetstream.php:13
+Stack trace:
+#0 {main}
+  thrown in /home3/nexorain/aqonpj.nexorainfo.com/routes/jetstream.php on line 13
+[03-May-2025 18:11:20 UTC] PHP Fatal error:  Uncaught Error: Class "Illuminate\Support\Facades\Route" not found in /home3/nexorain/aqonpj.nexorainfo.com/routes/web.php:8
+Stack trace:
+#0 {main}
+  thrown in /home3/nexorain/aqonpj.nexorainfo.com/routes/web.php on line 8
+[03-May-2025 18:12:21 UTC] PHP Fatal error:  Uncaught Error: Class "Illuminate\Support\Facades\Broadcast" not found in /home3/nexorain/aqonpj.nexorainfo.com/routes/channels.php:17
+Stack trace:
+#0 {main}
+  thrown in /home3/nexorain/aqonpj.nexorainfo.com/routes/channels.php on line 17
+[03-May-2025 18:15:28 UTC] PHP Fatal error:  Uncaught Error: Class "Illuminate\Support\Facades\Artisan" not found in /home3/nexorain/aqonpj.nexorainfo.com/routes/console.php:17
+Stack trace:
+#0 {main}
+  thrown in /home3/nexorain/aqonpj.nexorainfo.com/routes/console.php on line 17
