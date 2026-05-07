@@ -17,6 +17,7 @@ use App\Observers\SubDivisionEmployeeObserver;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\URL;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -37,5 +38,9 @@ class AppServiceProvider extends ServiceProvider
         SubDivisionEmployee::observe(SubDivisionEmployeeObserver::class);
         DocumentCategory::observe(DocumentCategoryObserver::class);
         OfficeSettingHeader::observe(OfficeSettingHeaderObserver::class);
+
+         if (app()->environment('production')) {
+            URL::forceScheme('https');
+        }
     }
 }
