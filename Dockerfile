@@ -46,7 +46,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
 WORKDIR /var/www/html
 
-# Copy application first
+# Copy application
 COPY . .
 
 # Install dependencies
@@ -65,8 +65,7 @@ RUN mkdir -p \
     storage/app/public \
     bootstrap/cache
 
-# IMPORTANT:
-# Unit runs as `unit:unit`, NOT www-data
+# Unit runs as `unit:unit`
 RUN chown -R unit:unit /var/www/html \
     && chmod -R 775 storage bootstrap/cache \
     && chmod -R 775 storage/app/public \
@@ -79,11 +78,16 @@ COPY unit.json /docker-entrypoint.d/unit.json
 
 EXPOSE 80
 
-# Runtime permission fix for Coolify mounted volumes
 CMD sh -c "\
     chown -R unit:unit /var/www/html/storage /var/www/html/bootstrap/cache && \
     chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache && \
     touch /var/www/html/storage/logs/laravel.log && \
     chown unit:unit /var/www/html/storage/logs/laravel.log && \
     chmod 664 /var/www/html/storage/logs/laravel.log && \
-    unitd --no-daemon"
+    unitd --no-daemon --control unix:/var/run/control.unit.sock & \
+    sleep 2 && \
+    curl -s -X PUT --data-binary @/docker-entrypoint.d/unit.json \
+        --unix-socket /var/run/control.unit.sock \
+        http://localhost/config && \
+    echo 'Unit config loaded successfully' && \
+    wait"
