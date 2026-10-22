@@ -1,4 +1,27 @@
-FROM unit:1.34.1-php8.3
+# --- Same NGINX Unit 1.34.1, rebuilt on the latest patched PHP 8.3 (PHP2Shell fix) ---
+FROM php:8.3-cli-bookworm AS unit-build
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        ca-certificates git build-essential libssl-dev libpcre2-dev pkg-config \
+    && git clone --depth 1 -b 1.34.1 https://github.com/nginx/unit /usr/src/unit \
+    && cd /usr/src/unit \
+    && ./configure --prefix=/usr --statedir=/var/lib/unit \
+        --control=unix:/var/run/control.unit.sock --runstatedir=/var/run \
+        --pid=/var/run/unit.pid --logdir=/var/log --log=/dev/stdout \
+        --tmpdir=/var/tmp --user=unit --group=unit --openssl \
+        --modulesdir=/usr/lib/unit/modules \
+    && make -j"$(nproc)" unitd \
+    && install -pm755 build/sbin/unitd /usr/sbin/unitd \
+    && ./configure php \
+    && make -j"$(nproc)" php-install
+
+FROM php:8.3-cli-bookworm
+COPY --from=unit-build /usr/sbin/unitd /usr/sbin/unitd
+COPY --from=unit-build /usr/lib/unit /usr/lib/unit
+RUN groupadd --system unit \
+    && useradd --system --gid unit --no-create-home --home /nonexistent --shell /bin/false unit \
+    && mkdir -p /var/lib/unit
+STOPSIGNAL SIGTERM
+# --- original Dockerfile continues unchanged below ---
 
 # Install system dependencies + PHP extensions
 RUN apt update && apt install -y \
