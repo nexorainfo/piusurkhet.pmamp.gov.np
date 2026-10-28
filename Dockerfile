@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1
+
 # --- Same NGINX Unit 1.34.1, rebuilt on the latest patched PHP 8.3 (PHP2Shell fix) ---
 FROM php:8.3-cli-bookworm AS unit-build
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -69,13 +71,22 @@ COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
 WORKDIR /var/www/html
 
+# Install PHP dependencies first, so this layer stays cached until composer.json/composer.lock change
+COPY composer.json composer.lock ./
+RUN --mount=type=cache,target=/tmp/composer-cache \
+    COMPOSER_CACHE_DIR=/tmp/composer-cache composer install \
+    --prefer-dist \
+    --no-interaction \
+    --no-dev \
+    --no-scripts \
+    --no-autoloader
+
 # Copy application
 COPY . .
 
-# Install dependencies
-RUN composer install \
-    --prefer-dist \
-    --optimize-autoloader \
+# Build the autoloader now that the app code is in place (also runs package:discover)
+RUN composer dump-autoload \
+    --optimize \
     --no-interaction \
     --no-dev
 
