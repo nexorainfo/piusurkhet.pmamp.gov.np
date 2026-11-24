@@ -26,9 +26,10 @@ class DocumentController extends BaseController
             ResponseAlias::HTTP_FORBIDDEN,
             '403 Forbidden | you are not allowed to access this resource'
         );
-        $documentCategory->load(['mainDocuments' => function ($query) {
-            $query->orderByDesc('published_date');
-        }]);
+        $documentCategory->load([
+            'mainDocuments' => fn ($q) => $q->orderByBsPublishedDateDesc()
+        ]);
+
 
         return view('admin.documents.document.index', compact('documentCategory'));
     }
