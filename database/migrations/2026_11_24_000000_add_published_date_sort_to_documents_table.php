@@ -10,11 +10,15 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('documents', function (Blueprint $table) {
-            // Zero-padded copy of published_date ("2083-02-06") used only for sorting.
-            $table->string('published_date_sort', 10)->nullable()->after('published_date');
-            $table->index(['status', 'published_date_sort']);
-        });
+        if (!Schema::hasColumn('documents', 'published_date_sort')) {
+            Schema::table('documents', function (Blueprint $table) {
+                // Zero-padded copy of published_date ("2083-02-06") used only for sorting.
+                $table->string('published_date_sort', 10)->nullable()->after('published_date');
+                $table->index(['status', 'published_date_sort']);
+            });
+        }
+
+        // Safe to repeat: recomputes the sort key from the date as typed.
 
         DB::table('documents')->select('id', 'published_date')->orderBy('id')
             ->chunkById(500, function ($documents) {

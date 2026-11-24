@@ -8,6 +8,11 @@ return new class extends Migration
 {
     public function up()
     {
+        // Some sites already have this table (created by hand); don't create it twice.
+        if (Schema::hasTable('subordinates')) {
+            return;
+        }
+
         Schema::create('subordinates', function (Blueprint $table) {
             $table->id();
             $table->string('title');
