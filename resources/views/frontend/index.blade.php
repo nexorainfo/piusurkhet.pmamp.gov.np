@@ -1,29 +1,5 @@
 @extends('layouts.master')
 @section('content')
-    <section class="mt-2">
-        <div class="container">
-            <div class="marquee-slider">
-                <h2 class="marquee-title">{{ __('Latest News') }}</h2>
-                <div id="newsCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="2000">
-                    <div class="carousel-inner">
-                        @foreach ($tickerFiles as $key => $tickerFile)
-                            <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
-                                <a class="marquee-item"
-                                    href="{{ route('documentDetail', [$tickerFile->slug, 'language' => $language]) }}">
-                                    @if (request()->language == 'en')
-                                        {{ $tickerFile->title_en }}
-                                    @else
-                                        {{ $tickerFile->title }}
-                                    @endif
-                                    {{ $tickerFile->published_date_padded }}
-                                </a>
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
     <section class="mt-4">
         <div class="container">
             <div class="row">

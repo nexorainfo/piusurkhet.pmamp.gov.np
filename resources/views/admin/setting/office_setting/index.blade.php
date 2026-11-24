@@ -226,6 +226,51 @@
                         @enderror
                     </div>
                 </div>
+                <div class="col-md-6">
+                    <div class="input-style-1">
+                        <label for="office_hours_winter">Office Hours - Winter (कार्तिक १६ - माघ १५)</label>
+                        <input type="text" name="office_hours_winter" id="office_hours_winter" value="{{ old('office_hours_winter', $officeSetting->office_hours_winter) }}" placeholder="सोमबार - शुक्रबार ( ०९:०० - ४:०० ) बजे">
+                        @error('office_hours_winter')
+                        <p class="text-danger">{{$message}}</p>
+                        @enderror
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="input-style-1">
+                        <label for="office_hours_summer">Office Hours - Summer (माघ १६ - कार्तिक १५)</label>
+                        <input type="text" name="office_hours_summer" id="office_hours_summer" value="{{ old('office_hours_summer', $officeSetting->office_hours_summer) }}" placeholder="सोमबार - शुक्रबार ( ०९:०० - ५:०० ) बजे">
+                        @error('office_hours_summer')
+                        <p class="text-danger">{{$message}}</p>
+                        @enderror
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="input-style-1">
+                        <label for="youtube_url">YouTube Url</label>
+                        <input type="text" name="youtube_url" id="youtube_url" value="{{ old('youtube_url', $officeSetting->youtube_url) }}" placeholder="https://www.youtube.com/@...">
+                        @error('youtube_url')
+                        <p class="text-danger">{{$message}}</p>
+                        @enderror
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="input-style-1">
+                        <label for="instagram_url">Instagram Url</label>
+                        <input type="text" name="instagram_url" id="instagram_url" value="{{ old('instagram_url', $officeSetting->instagram_url) }}" placeholder="https://www.instagram.com/...">
+                        @error('instagram_url')
+                        <p class="text-danger">{{$message}}</p>
+                        @enderror
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="input-style-1">
+                        <label for="tiktok_url">TikTok Url</label>
+                        <input type="text" name="tiktok_url" id="tiktok_url" value="{{ old('tiktok_url', $officeSetting->tiktok_url) }}" placeholder="https://www.tiktok.com/@...">
+                        @error('tiktok_url')
+                        <p class="text-danger">{{$message}}</p>
+                        @enderror
+                    </div>
+                </div>
                 <div class="col-md-12">
                     <button type="submit" class="btn btn-sm btn-primary">
                         Submit

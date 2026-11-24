@@ -35,7 +35,12 @@ class OfficeSetting extends Model
         'map_iframe',
         'facebook_iframe',
         'twitter_iframe',
-        'document_list_type'
+        'document_list_type',
+        'office_hours_winter',
+        'office_hours_summer',
+        'youtube_url',
+        'instagram_url',
+        'tiktok_url',
     ];
 
     public function setCoverPhotoAttribute($value)
@@ -65,6 +70,34 @@ class OfficeSetting extends Model
             $this->attributes['background_img'] = $value->store('office_setting', 'public');
         }
     }
+    /**
+     * Social profile links for the footer, keyed by network.
+     * The Facebook and Twitter fields hold embed (plugin) URLs; the page address is read from their href parameter.
+     */
+    public function getSocialLinksAttribute(): array
+    {
+        $links = [
+            'facebook' => self::pageUrlFromEmbed($this->facebook_iframe),
+            'x' => self::pageUrlFromEmbed($this->twitter_iframe),
+            'youtube' => $this->youtube_url,
+            'instagram' => $this->instagram_url,
+            'tiktok' => $this->tiktok_url,
+        ];
+
+        return array_filter($links, fn ($url) => is_string($url) && preg_match('#^https?://#i', $url));
+    }
+
+    private static function pageUrlFromEmbed(?string $url): ?string
+    {
+        if (!$url) {
+            return null;
+        }
+
+        parse_str((string) parse_url($url, PHP_URL_QUERY), $query);
+
+        return isset($query['href']) && is_string($query['href']) ? $query['href'] : $url;
+    }
+
     public function chief(): BelongsTo
     {
         return $this->belongsTo(Employee::class, 'chief_id');

@@ -3,6 +3,7 @@
 namespace App\Support;
 
 use App\Models\Designation;
+use App\Models\Document;
 use App\Models\DocumentCategory;
 use App\Models\Employee;
 use App\Models\Link;
@@ -36,6 +37,7 @@ class FrontendCache
         Employee::class,      // office chief / information officer
         Designation::class,
         DocumentCategory::class, // menu links point at these by slug
+        Document::class,      // header notices
         OfficeDetail::class,
         SubDivision::class,
         Subordinate::class,

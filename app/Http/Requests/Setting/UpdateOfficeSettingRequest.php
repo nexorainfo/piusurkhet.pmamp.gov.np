@@ -36,6 +36,11 @@ class UpdateOfficeSettingRequest extends FormRequest
                 'map_iframe' => ['nullable', 'url'],
                 'facebook_iframe' => ['nullable', 'url'],
                 'twitter_iframe' => ['nullable', 'url'],
+                'office_hours_winter' => ['nullable', 'string', 'max:255'],
+                'office_hours_summer' => ['nullable', 'string', 'max:255'],
+                'youtube_url' => ['nullable', 'url', 'max:255'],
+                'instagram_url' => ['nullable', 'url', 'max:255'],
+                'tiktok_url' => ['nullable', 'url', 'max:255'],
                 'document_list_type' => ['required', Rule::in(['card', 'list'])]
             ];
         }
@@ -55,6 +60,11 @@ class UpdateOfficeSettingRequest extends FormRequest
                 'map_iframe' => ['nullable', 'url'],
                 'facebook_iframe' => ['nullable', 'url'],
                 'twitter_iframe' => ['nullable', 'url'],
+                'office_hours_winter' => ['nullable', 'string', 'max:255'],
+                'office_hours_summer' => ['nullable', 'string', 'max:255'],
+                'youtube_url' => ['nullable', 'url', 'max:255'],
+                'instagram_url' => ['nullable', 'url', 'max:255'],
+                'tiktok_url' => ['nullable', 'url', 'max:255'],
                 'document_list_type' => ['required', Rule::in(['card', 'list'])]
             ];
         }

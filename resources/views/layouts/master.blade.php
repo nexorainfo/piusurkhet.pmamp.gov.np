@@ -18,6 +18,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('assets/frontend/css/site-header-footer.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/frontend/css/site-documents.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/frontend/css/site-accessibility.css') }}">
+    {{-- In <head> so saved accessibility settings apply before the page paints --}}
+    <script src="{{ asset('assets/frontend/js/site-accessibility.js') }}"></script>
     @stack('style')
 </head>
 
@@ -27,6 +30,8 @@
     @yield('content')
 
     @include('frontend.partials.footer')
+
+    @include('frontend.partials.accessibility')
 
     <button onclick="topFunction()" id="backToTop" title="Go to top">
         <svg fill="#fff" height="30px" width="30px" version="1.1" id="Capa_1"

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Document;
 use App\Models\Link;
 use App\Models\Menu;
 use App\Models\OfficeSetting;
@@ -28,6 +29,12 @@ class BaseController extends Controller
                     ->orderBy('position', 'asc')
                     ->get(),
                 'officeSettingHeaders' => OfficeSettingHeader::orderBy('position', 'asc')->get(),
+                // Rotating "important notices" in the header band on every page.
+                'headerNotices' => Document::whereStatus(1)
+                    ->whereMarkAsNew(1)
+                    ->orderByBsPublishedDateDesc()
+                    ->limit(10)
+                    ->get(['id', 'slug', 'title', 'title_en', 'published_date']),
             ];
         });
 

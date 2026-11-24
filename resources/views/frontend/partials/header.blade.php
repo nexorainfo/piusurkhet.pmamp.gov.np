@@ -12,6 +12,11 @@
             <div class="site-header__deco">
                 <img src="{{ asset('storage/' . $header->cover_photo) }}" alt="">
             </div>
+        @else
+            {{-- Stupa, temples and hills skyline, as on opmcm.gov.np --}}
+            <div class="site-header__skyline" aria-hidden="true">
+                <img src="{{ asset('images/skyline.png') }}" alt="">
+            </div>
         @endif
 
         <div class="site-header__brand">
@@ -43,6 +48,21 @@
                 </button>
             </div>
         </div>
+
+        @if (($headerNotices ?? collect())->isNotEmpty())
+            <div class="site-header__notices" role="region" aria-labelledby="site-notices-title">
+                <h2 class="site-header__notices-title" id="site-notices-title">{{ __('Important Notices') }}</h2>
+                <ul class="site-header__notices-list" data-notice-ticker>
+                    @foreach ($headerNotices as $notice)
+                        <li class="site-header__notice {{ $loop->first ? 'is-active' : '' }}">
+                            <a href="{{ route('documentDetail', [$notice->slug, 'language' => $language]) }}">
+                                {{ $isEnglish && $notice->title_en ? $notice->title_en : $notice->title }}
+                            </a>
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
         <div class="site-header__flag-area">
             @if ($header?->ne_header)
