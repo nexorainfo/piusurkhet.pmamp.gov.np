@@ -1,121 +1,105 @@
-<footer class="footer-bg-color mt-2">
-    <div class="footer-padding">
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-4 col-md-4 col-lg-4">
-                    <h4 class="footer-title mb-3">
-                        {{ __('Contacts') }}
-                    </h4>
-                    <h4 class="office-name">
-                        @if (request()->language == 'en')
-                            {{ $header->office_name_en }}
-                        @else
-                            {{ $header->office_name }}
-                        @endif
-                    </h4>
-                    <div class="footer-contact mt-1">
-                        <ul class="d-flex flex-column list-unstyled gap-1">
-                            <li>
-                                <i class="fa fa-map-marker"></i>
-                                @if (request()->language == 'en')
-                                    {{ $header->office_address_en }}
-                                @else
-                                    {{ $header->office_address }}
-                                @endif
-                            </li>
-                            <li class="d-flex gap-3 align-items-center">
-                                <i class="fa fa-envelope"></i>
-                                <div class="d-flex flex-col gap-2">
-                                    @foreach (explode(',', $header->office_email) as $email)
-                                        <a href="mailto:{{ $email }}">
-                                            {{ $email }}
-                                        </a>
-                                        @if (!$loop->last), @endif
-                                    @endforeach
-                                </div>
+@php
+    $isEnglish = app()->getLocale() === 'en';
+    $emails = array_filter(array_map('trim', explode(',', (string) $header?->office_email)));
+    $phones = array_filter(array_map('trim', explode(',', (string) $header?->office_phone)));
+    $year = \NepDate\AdDate::fromDateTime(new DateTimeImmutable())
+        ->toBs()
+        ->format('Y', $isEnglish ? 'en' : 'ne');
+@endphp
 
-                            </li>
-                            <li class="d-flex gap-3 align-items-center">
-                                <i class="fa fa-phone"></i>
-                                <div class="d-flex gap-2">
-                                    @foreach (explode(',', $header->office_phone) as $phone)
-                                        <a href="mailto:{{ $phone }}">
-                                            {{ $phone }}
-                                        </a>
-                                        @if (!$loop->last), @endif
-                                    @endforeach
-                                </div>
-                            </li>
-
-                        </ul>
-                    </div>
-                    <div class="footer-social mt-4">
-                        <ul class="d-flex list-unstyled gap-2">
-                            <li>
-                                <a href="#">
-                                    <i class="fa fa-facebook"></i></a>
-                            </li>
-                            <li>
-                                <a href="#">
-                                    <i class="fa fa-twitter"></i></a>
-                            </li>
-                            <li>
-                                <a href="#">
-                                    <i class="fa fa-youtube"></i></a>
-                            </li>
-                        </ul>
-
-                    </div>
-                </div>
-                <div class="col-sm-4 col-md-4 col-lg-4">
-                    <h4 class="footer-title mb-3">{{ __('Important Links') }}</h4>
-                    <div class="footer-link">
-                        <ul class="list-unstyled">
-                            @foreach ($sharedLinks as $link)
-                                <li class="mb-2">
-                                    <a class="text-decoration-none" href="{{ $link->url }}" target="_blank">
-                                        {{ $link->title }}
-                                    </a>
-                                </li>
-                            @endforeach
-                        </ul>
-                        <a href="{{ route('static', ['links', 'language' => $language]) }}"
-                            class="btn btn-light btn-sm">
-                            {{ __('View More') }}
-                        </a>
-                    </div>
-                </div>
-                <div class="col-sm-4 col-md-4 col-lg-4">
-                    <h4 class="footer-title mb-3">कार्यालय समय</h4>
-                    <div class="text-white">
-
-                        <h5 class="subTitle">जाडो (कार्तिक १६ देखि माघ १५)</h5>
-
-                        <div class="d-flex justify-content-between mt-2">
-                            <h6>सोमबार देखि शुक्रबार</h6>
-                            <span class="time">बिहान ०९:०० देखि बेलुकी ४:०० सम्म</span>
-                        </div>
-
-                        <hr>
-
-                        <h5 class="subTitle">गर्मी (माघ १६ देखि कार्तिक १५)</h5>
-
-                        <div class="d-flex justify-content-between mt-2">
-                            <h6>सोमबार देखि शुक्रबार</h6>
-                            <span class="time">बिहान ०९:०० देखि बेलुकी ५:०० बजे सम्म</span>
-                        </div>
-                    </div>
+<footer class="site-footer">
+    <div class="site-footer__container">
+        <div class="site-footer__top">
+            <div class="site-footer__col">
+                <h2 class="site-footer__title">{{ __('Useful Links') }}</h2>
+                <ul class="site-footer__menu">
+                    @foreach ($sharedLinks as $link)
+                        <li>
+                            <a href="{{ $link->url }}" class="site-footer__link" target="_blank" rel="noopener">
+                                {{ $isEnglish && $link->title_en ? $link->title_en : $link->title }}
+                            </a>
+                        </li>
+                    @endforeach
+                </ul>
+                <div class="site-footer__more">
+                    <a href="{{ route('static', ['links', 'language' => $language]) }}">{{ __('View All') }}</a>
                 </div>
             </div>
 
+            <div class="site-footer__col">
+                <h2 class="site-footer__title">{{ __('Contact Address') }}</h2>
+                <ul class="site-footer__menu">
+                    @if ($header?->office_name || $header?->office_name_en)
+                        <li class="site-footer__office">
+                            {{ $isEnglish ? $header->office_name_en : $header->office_name }}
+                        </li>
+                    @endif
+                    @if ($header?->office_address || $header?->office_address_en)
+                        <li class="site-footer__group">
+                            <span class="site-footer__label">
+                                <svg viewBox="0 0 384 512" aria-hidden="true">
+                                    <path fill="currentColor"
+                                        d="M172.268 501.67C26.97 291.031 0 269.413 0 192 0 85.961 85.961 0 192 0s192 85.961 192 192c0 77.413-26.97 99.031-172.268 309.67-9.535 13.774-29.93 13.773-39.464 0zM192 272c44.183 0 80-35.817 80-80s-35.817-80-80-80-80 35.817-80 80 35.817 80 80 80z" />
+                                </svg>
+                                {{ __('Address') }}:
+                            </span>
+                            <span>{{ $isEnglish ? $header->office_address_en : $header->office_address }}</span>
+                        </li>
+                    @endif
+                    <li class="site-footer__group">
+                        <span class="site-footer__label">
+                            <svg viewBox="0 0 512 512" aria-hidden="true">
+                                <path fill="currentColor"
+                                    d="M502.3 190.8c3.9-3.1 9.7-.2 9.7 4.7V400c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V195.6c0-5 5.7-7.8 9.7-4.7 22.4 17.4 52.1 39.5 154.1 113.6 21.1 15.4 56.7 47.8 92.2 47.6 35.7.3 72-32.8 92.3-47.6 102-74.1 131.6-96.3 154-113.7zM256 320c23.2.4 56.6-29.2 73.4-41.4 132.7-96.3 142.8-104.7 173.4-128.7 5.8-4.5 9.2-11.5 9.2-18.9v-19c0-26.5-21.5-48-48-48H48C21.5 64 0 85.5 0 112v19c0 7.4 3.4 14.3 9.2 18.9 30.6 23.9 40.7 32.4 173.4 128.7 16.8 12.2 50.2 41.8 73.4 41.4z" />
+                            </svg>
+                            {{ __('Email') }}:
+                        </span>
+                        <span class="site-footer__values">
+                            @forelse ($emails as $email)
+                                <a href="mailto:{{ $email }}">{{ $email }}</a>
+                            @empty
+                                -
+                            @endforelse
+                        </span>
+                    </li>
+                    <li class="site-footer__group">
+                        <span class="site-footer__label">
+                            <svg viewBox="0 0 512 512" aria-hidden="true">
+                                <path fill="currentColor"
+                                    d="M497.39 361.8l-112-48a24 24 0 0 0-28 6.9l-49.6 60.6A370.66 370.66 0 0 1 130.6 204.11l60.6-49.6a23.94 23.94 0 0 0 6.9-28l-48-112A24.16 24.16 0 0 0 122.6.61l-104 24A24 24 0 0 0 0 48c0 256.5 207.9 464 464 464a24 24 0 0 0 23.4-18.6l24-104a24.29 24.29 0 0 0-14.01-27.6z" />
+                            </svg>
+                            {{ __('Phone') }}:
+                        </span>
+                        <span class="site-footer__values">
+                            @forelse ($phones as $phone)
+                                <a href="tel:{{ $phone }}">{{ $phone }}</a>
+                            @empty
+                                -
+                            @endforelse
+                        </span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="site-footer__col">
+                @if ($header?->map_iframe)
+                    <div class="site-footer__map">
+                        <iframe src="{{ $header->map_iframe }}" title="{{ __('Our Map') }}" loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+                    </div>
+                @endif
+            </div>
         </div>
-    </div>
-    <div class="container border-top pb-3">
-        <div class="pt-2 d-flex justify-content-between text-white">
-            <span>© सर्वाधिकार सुरक्षित २०८१ </span>
-            {{-- <span>Developed By:
-                <a class="text-white" href="https://nexorainfo.com/" target="_blank">Nexora Info</a>
-            </span> --}}
+
+        <div class="site-footer__bottom">
+            <p class="site-footer__copyright">© {{ __('All rights reserved') }} {{ $year }}</p>
+            <button type="button" class="site-footer__top-btn" onclick="topFunction()"
+                aria-label="{{ __('Back to top') }}">
+                <svg viewBox="0 0 448 512" width="16" height="16" aria-hidden="true">
+                    <path fill="currentColor"
+                        d="M34.9 289.5l-22.2-22.2c-9.4-9.4-9.4-24.6 0-33.9L207 39c9.4-9.4 24.6-9.4 33.9 0l194.3 194.3c9.4 9.4 9.4 24.6 0 33.9L413 289.4c-9.5 9.5-25 9.3-34.3-.4L264 168.6V456c0 13.3-10.7 24-24 24h-32c-13.3 0-24-10.7-24-24V168.6L69.2 289.1c-9.3 9.8-24.8 10-34.3.4z" />
+                </svg>
+            </button>
         </div>
     </div>
 </footer>

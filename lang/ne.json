@@ -40,8 +40,8 @@
     "Remarks": "कैफियत",
     "Contact": "सम्पर्क",
     "Phone": "फोन",
-    "Contact Address":"संपर्क ठेगाना",
-    "Email": "इ-मेल",
+    "Contact Address":"सम्पर्क ठेगाना",
+    "Email": "ईमेल",
     "Office Name": "कार्यालयको नाम",
     "Calendar": "पात्रो",
     "Facebook": "फेसबुक",
@@ -51,6 +51,19 @@
     "Liquid Nitrogen Distributor": "त.ना वितरण अधिकारी",
     "Semen Distribution Action Plan": "सिमेन वितरण कार्ययोजना",
     "Today's date": "आजको मिति",
-    "Highlights": "हाइलाइटहरू"
+    "Highlights": "हाइलाइटहरू",
+    "Home": "गृहपृष्ठ",
+    "B.S.": "वि.सं.",
+    "Useful Links": "उपयोगी लिङ्कहरू",
+    "View All": "सबै हेर्नुहोस",
+    "Address": "ठेगाना",
+    "All rights reserved": "सर्वाधिकार सुरक्षित",
+    "Search": "खोज्नुहोस्",
+    "Search...": "खोज्नुहोस्...",
+    "Menu": "मेनु",
+    "Main menu": "मुख्य मेनु",
+    "Back to top": "माथि जानुहोस्",
+    "Emblem of Nepal": "नेपालको निशान छाप",
+    "Flag of Nepal": "नेपालको झण्डा"
 
 }

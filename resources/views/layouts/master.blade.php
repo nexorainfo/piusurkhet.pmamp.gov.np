@@ -15,75 +15,13 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Kalimati:wght@200;300;400;500;600;700;800&display=swap"
         rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('assets/frontend/css/site-header-footer.css') }}">
     @stack('style')
 </head>
 
 <body>
-    <header>
-        <div class="d-none d-sm-block border-bottom py-2">
-            <div class="container d-flex justify-content-between align-items-center">
-                <ul class="d-flex list-unstyled gap-2 top-bar-list mb-0">
-                    <li>
-                        <a href="mailto:{{ explode(',', $header->office_email)[0] ?? '' }}">
-                            <i class="fa fa-envelope"></i>
-                            {{ explode(',', $header->office_email)[0] ?? '' }}
-                        </a>
-                    </li>
-                    <li>
-                        <a href="tel:{{ explode(',', $header->office_phone)[0] ?? '' }}">
-                            <i class="fa fa-phone"></i>
-                            {{ explode(',', $header->office_phone)[0] ?? '' }}
-                        </a>
-                    </li>
-                    <li>
-                        <i class="fa fa-calendar"></i>
-                        <x-top-bar-date-component />
-                    </li>
-                </ul>
-                <div>
-                    <div class="language-switcher">
-                        <a href="{{ route('language', 'en') }}"
-                            class="lang-btn {{ app()->getLocale() == 'en' ? 'active' : '' }}">ENG</a>
-                        <a href="{{ route('language', 'ne') }}"
-                            class="lang-btn {{ app()->getLocale() == 'ne' ? 'active' : '' }}">NEP</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="header-style-01">
-            <div class="decorative-img">
-                <img src={{ asset('storage/' . $header->cover_photo) }} alt="">
-            </div>
-            <div
-                class="container d-flex flex-column flex-md-row justify-content-between align-items-center position-relative mt-3">
-                <div class="d-flex gap-3">
-                    <div class="logo-box">
-                        <img src="{{ asset('storage/' . $header->en_header) }}" alt="Emblem Of Nepal">
-                    </div>
-
-                </div>
-                <div class="text-center position-relative">
-                    @foreach ($officeSettingHeaders as $officeSettingHeader)
-                        <p
-                            style="font-size:{{ $officeSettingHeader->font_size }}px;font-family: {{ $officeSettingHeader->font_type }};color: {{ $officeSettingHeader->font_color }};line-height: 0.5 !important;font-weight: {{ $officeSettingHeader->font }};">
-                            @if (request()->language == 'en')
-                                {{ $officeSettingHeader->english }}
-                            @else
-                                {{ $officeSettingHeader->nepali }}
-                            @endif
-                        </p>
-                    @endforeach
-                </div>
-
-                <div class="nepali-flag position-relative d-none d-sm-block">
-                    <img src="{{ asset('storage/' . $header->ne_header) }}" alt="Nepali Flag">
-                </div>
-            </div>
-        </div>
-
-        @include('frontend.partials.nav')
-
-    </header>
+    @include('frontend.partials.header')
 
     @yield('content')
 
@@ -113,26 +51,57 @@
     <script src="{{ asset('assets/frontend/js/app.js') }}"></script>
     @stack('script')
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            if (window.innerWidth > 992) {
-                document.querySelectorAll('.navbar .nav-item').forEach(function(everyitem) {
-                    everyitem.addEventListener('mouseover', function(e) {
-                        let el_link = this.querySelector('a[data-bs-toggle]');
-                        if (el_link != null) {
-                            let nextEl = el_link.nextElementSibling;
-                            el_link.classList.add('show');
-                            nextEl.classList.add('show');
-                        }
-                    });
-                    everyitem.addEventListener('mouseleave', function(e) {
-                        let el_link = this.querySelector('a[data-bs-toggle]');
-                        if (el_link != null) {
-                            let nextEl = el_link.nextElementSibling;
-                            el_link.classList.remove('show');
-                            nextEl.classList.remove('show');
-                        }
-                    })
+        document.addEventListener('DOMContentLoaded', function() {
+            const nav = document.querySelector('.site-nav');
+            if (!nav) return;
+            const isMobile = () => window.matchMedia('(max-width: 991.98px)').matches;
+
+            // Mobile menu toggle
+            document.querySelectorAll('[data-nav-toggle]').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    const open = nav.classList.toggle('is-open');
+                    btn.setAttribute('aria-expanded', open);
                 });
+            });
+
+            // Dropdowns: hover on desktop (CSS), tap to expand on mobile
+            nav.querySelectorAll('[data-dropdown-toggle]').forEach(function(link) {
+                link.addEventListener('click', function(e) {
+                    if (!isMobile()) {
+                        if (link.getAttribute('href') === '#') e.preventDefault();
+                        return;
+                    }
+                    e.preventDefault();
+                    const item = link.parentElement;
+                    const expanded = item.classList.toggle('is-expanded');
+                    link.setAttribute('aria-expanded', expanded);
+                });
+            });
+
+            // Search popover
+            const search = nav.querySelector('[data-search]');
+            const searchToggle = nav.querySelector('[data-search-toggle]');
+            if (search && searchToggle) {
+                searchToggle.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const open = search.classList.toggle('is-open');
+                    searchToggle.setAttribute('aria-expanded', open);
+                    if (open) search.querySelector('input').focus();
+                });
+                document.addEventListener('click', function(e) {
+                    if (!search.contains(e.target)) {
+                        search.classList.remove('is-open');
+                        searchToggle.setAttribute('aria-expanded', false);
+                    }
+                });
+            }
+
+            // Shadow + mini logo once the nav sticks to the top
+            const sentinel = document.querySelector('.site-nav__sentinel');
+            if (sentinel && 'IntersectionObserver' in window) {
+                new IntersectionObserver(function(entries) {
+                    nav.classList.toggle('is-stuck', !entries[0].isIntersecting);
+                }).observe(sentinel);
             }
         });
     </script>

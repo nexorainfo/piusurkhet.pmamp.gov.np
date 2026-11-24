@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a0e0172c7551ea9a3109a0ebdaf898d6",
+    "content-hash": "5a7d4dbed8ef0bb9abd515a73f3723b4",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -2645,6 +2645,65 @@
                 }
             ],
             "time": "2024-11-12T12:43:37+00:00"
+        },
+        {
+            "name": "nepdatejs/nepdate",
+            "version": "v0.1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nepdate/nepdate-php.git",
+                "reference": "7167c9bc95b8a1d890e61fdc8d2e6d801a89849f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nepdate/nepdate-php/zipball/7167c9bc95b8a1d890e61fdc8d2e6d801a89849f",
+                "reference": "7167c9bc95b8a1d890e61fdc8d2e6d801a89849f",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "ext-mbstring": "*",
+                "php": "^8.3"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.32",
+                "pestphp/pest": "^4.0 || ^5.0",
+                "phpstan/phpstan": "^2.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "NepDate\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Shishir Rai"
+                }
+            ],
+            "description": "Bikram Sambat (BS) ⇄ AD dates for PHP: conversion, arithmetic, formatting, parsing, fiscal year. PHP port of @nepdatejs/core, checked against it by conformance fixtures. Zero dependencies.",
+            "homepage": "https://nepdate.github.io/nepdate/integrations/php",
+            "keywords": [
+                "BS",
+                "bikram-sambat",
+                "calendar",
+                "fiscal-year",
+                "nepal",
+                "nepali",
+                "nepali-date"
+            ],
+            "support": {
+                "docs": "https://nepdate.github.io/nepdate/integrations/php",
+                "issues": "https://github.com/nepdate/nepdate/issues",
+                "security": "https://github.com/nepdate/nepdate/security/policy",
+                "source": "https://github.com/nepdate/nepdate-php"
+            },
+            "time": "2026-11-19T05:31:26+00:00",
+            "published-time": "2026-11-19T05:35:35+00:00"
         },
         {
             "name": "nesbot/carbon",
@@ -9255,12 +9314,12 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": "^8.2"
     },
-    "platform-dev": [],
-    "plugin-api-version": "2.6.0"
+    "platform-dev": {},
+    "plugin-api-version": "2.11.0"
 }

@@ -1,3 +1,3 @@
 <span class="date-text">
-    {{__("Today's date")}}: {{$todayDate}}
+    {{ __('B.S.') }}: {{ $todayDate }}
 </span>
