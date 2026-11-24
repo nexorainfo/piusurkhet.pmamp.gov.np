@@ -99,6 +99,10 @@ RUN mkdir -p \
     storage/app/public \
     bootstrap/cache
 
+# Public link to uploaded files (what `php artisan storage:link` makes):
+# public/storage -> storage/app/public. Relative, so it works wherever the app lives.
+RUN ln -sfn ../storage/app/public public/storage
+
 # Unit runs as `unit:unit`
 RUN chown -R unit:unit /var/www/html \
     && chmod -R 775 storage bootstrap/cache \
@@ -113,6 +117,7 @@ COPY unit.json /docker-entrypoint.d/unit.json
 EXPOSE 80
 
 CMD sh -c "\
+    { [ -e /var/www/html/public/storage ] || ln -s ../storage/app/public /var/www/html/public/storage; } && \
     chown -R unit:unit /var/www/html/storage /var/www/html/bootstrap/cache && \
     chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache && \
     touch /var/www/html/storage/logs/laravel.log && \
