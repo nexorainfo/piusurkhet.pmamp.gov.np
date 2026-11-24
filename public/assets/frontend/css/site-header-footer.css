@@ -74,7 +74,9 @@
 
 .site-header__brand {
     position: relative;
-    flex-basis: 30%;
+    /* As wide as the office name needs, so long names don't wrap into many lines */
+    flex: 0 1 auto;
+    max-width: 50%;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -483,6 +485,7 @@
 @media (max-width: 991.98px) {
     .site-header__brand {
         flex-basis: 100%;
+        max-width: none;
         padding: 15px 20px;
     }
 

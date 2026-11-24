@@ -4,13 +4,17 @@
     $mainLineId = $headerLines->sortByDesc(fn($line) => (int) $line->font_size)->first()?->id;
     $logo = $header?->en_header ? asset('storage/' . $header->en_header) : asset('images/logo.png');
     $officeName = $isEnglish ? $header?->office_name_en : $header?->office_name;
+    // A saved cover photo whose file is gone would show as a broken image; use the skyline then.
+    $coverPhoto = $header?->cover_photo && \Illuminate\Support\Facades\Storage::disk('public')->exists($header->cover_photo)
+        ? $header->cover_photo
+        : null;
 @endphp
 
 <header class="site-header">
     <div class="site-header__top">
-        @if ($header?->cover_photo)
+        @if ($coverPhoto)
             <div class="site-header__deco">
-                <img src="{{ asset('storage/' . $header->cover_photo) }}" alt="">
+                <img src="{{ asset('storage/' . $coverPhoto) }}" alt="">
             </div>
         @else
             {{-- Stupa, temples and hills skyline, as on opmcm.gov.np --}}
