@@ -15,7 +15,7 @@
                                     @else
                                         {{ $tickerFile->title }}
                                     @endif
-                                    {{ $tickerFile->published_date }}
+                                    {{ $tickerFile->published_date_padded }}
                                 </a>
                             </div>
                         @endforeach
@@ -40,8 +40,9 @@
                         <div class="carousel-inner">
                             @foreach ($sliders as $slider)
                                 <div class="carousel-item position-relative {{ $loop->first ? 'active' : '' }}">
-                                    <img src="{{ $slider->photo }}" class="d-block w-100 carousel-height rounded-2"
-                                        alt="{{ $slider->title }}">
+                                    <x-image :path="$slider->getRawOriginal('photo')" :widths="[640, 960, 1280, 1920]"
+                                        sizes="(min-width: 992px) 66vw, 100vw" :eager="$loop->first"
+                                        class="d-block w-100 carousel-height rounded-2" :alt="$slider->title" />
                                     <div class="carousel-caption py-2 px-3">
                                         @if (request()->language == 'en')
                                             <p class="mb-0">{{ $slider->title_en }}</p>
@@ -70,8 +71,10 @@
                                     @if ($header->chief_id)
                                         <div class="box-wrapper">
                                             <div class="box-image">
-                                                <img src="{{ $header->chief->photo ?? '' }}"
-                                                    alt="{{ $header->chief->name ?? '' }}">
+                                                <x-image :path="$header->chief?->getRawOriginal('photo')"
+                                                    :widths="[160, 320]" sizes="100px"
+                                                    :fallback="asset('assets/backend/images/user_icon.jpg')"
+                                                    :alt="$header->chief->name ?? ''" />
                                             </div>
                                             <div class="box-info">
                                                 <h5 class="box-name">{{ $header->chief->name ?? '' }}</h5>
@@ -93,8 +96,10 @@
                                     @if ($header->information_officer_id)
                                         <div class="box-wrapper">
                                             <div class="box-image">
-                                                <img src="{{ $header->informationOfficer->photo ?? '' }}"
-                                                    alt="{{ $header->informationOfficer->name ?? '' }}">
+                                                <x-image :path="$header->informationOfficer?->getRawOriginal('photo')"
+                                                    :widths="[160, 320]" sizes="100px"
+                                                    :fallback="asset('assets/backend/images/user_icon.jpg')"
+                                                    :alt="$header->informationOfficer->name ?? ''" />
                                             </div>
                                             <div class="box-info">
                                                 <h5 class="box-name">{{ $header->informationOfficer->name ?? '' }}</h5>
@@ -163,7 +168,7 @@
                                         @endif
                                     </a>
                                 </h3>
-                                <div class="date"><i class="fa fa-clock-o"></i> {{ $tickerFile->published_date }}</div>
+                                <div class="date"><i class="fa fa-clock-o"></i> {{ $tickerFile->published_date_padded }}</div>
                             </div>
                         @endforeach
                     </div>
@@ -231,9 +236,9 @@
                                                                 <small>
                                                                     <i class="fa fa-clock-o"></i>
                                                                     @if (request()->language == 'en')
-                                                                        {{ $document->published_date }}
+                                                                        {{ $document->published_date_padded }}
                                                                     @else
-                                                                        {{ $document->published_date }}
+                                                                        {{ $document->published_date_padded }}
                                                                     @endif
                                                                 </small>
                                                             </div>
@@ -288,8 +293,8 @@
                     <div class="border">
                         <div class="gallery-image">
                             <a href="{{ route('photoGalleryDetails', [$gallery->slug, 'language' => $language]) }}">
-                                <img src="{{ !empty($gallery->photos->first()) ? asset('storage/' . $gallery->photos->first()?->images) : '' }}"
-                                    alt={{ $gallery->title_en }}>
+                                <x-image :path="$gallery->coverPhoto?->images" :widths="[320, 640, 960]"
+                                    sizes="(min-width: 768px) 33vw, 100vw" :alt="$gallery->title_en" />
                             </a>
                         </div>
 
@@ -330,7 +335,7 @@
                 </div>
             
                     <div class="my-3">
-                   <iframe src="{{$header->facebook_iframe}}"
+                   <iframe src="{{$header->facebook_iframe}}" loading="lazy"
                         style="border: none; overflow: hidden; width: 100%; height: 400px;"
                         scrolling="no"
                         frameborder="0"
@@ -351,7 +356,7 @@
                 </div>
 
                 <div class="my-3">
-                    <iframe src="https://www.hamropatro.com/widgets/calender-medium.php"
+                    <iframe src="https://www.hamropatro.com/widgets/calender-medium.php" loading="lazy"
                         frameborder="0"
                         scrolling="no"
                         style="border: none; overflow: hidden; width: 100%; height: 385px;"
@@ -413,35 +418,13 @@
 
     @push('script')
         <script>
-            const myCarousel = document.querySelector('#myCarousel');
-            const carousel = new bootstrap.Carousel(myCarousel, {
-                interval: 2000,
-                wrap: false,
-                loop: true
-            });
-        </script>
-        <script>
-            let items = document.querySelectorAll('#galleryCarousel .carousel-item')
-            items.forEach((el) => {
-                const minPerSlide = 4
-                let next = el.nextElementSibling
-                for (var i = 1; i < minPerSlide; i++) {
-                    if (!next) {
-                        // wrap carousel by using first child
-                        next = items[0]
-                    }
-                    let cloneChild = next.cloneNode(true)
-                    el.appendChild(cloneChild.children[0])
-                    next = next.nextElementSibling
-                }
-            })
-        </script>
-        <script>
-            $(document).ready(function() {
-                $("#noticeModal").modal("show");
-                setTimeout(function() {
-                    $('#noticeModal').modal('hide');
-                }, 10000);
+            // Show the notice pop-up for 10 seconds on page load.
+            document.addEventListener('DOMContentLoaded', function() {
+                const noticeModal = document.getElementById('noticeModal');
+                if (!noticeModal || !window.bootstrap) return;
+                const modal = new bootstrap.Modal(noticeModal);
+                modal.show();
+                setTimeout(() => modal.hide(), 10000);
             });
         </script>
     @endpush

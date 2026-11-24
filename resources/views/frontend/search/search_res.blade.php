@@ -3,44 +3,22 @@
     <div class="container my-5">
         <div class="title">
             <h4 class="category-title">
-                खोजिएको शीर्षक : {{ $keyword }}
+                {{ __('Search results for') }}: {{ $keyword }}
             </h4>
         </div>
 
-        <div class="document-table my-4">
-            <div class="table-responsive">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>{{ __('S.N') }}</th>
-                            <th>{{ __('Title') }}</th>
-                            <th>{{ __('Published Date') }}</th>
-                            <th>कार्य</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($documents as $document)
-                            <tr>
-                                <td>{{ $loop->iteration }}</td>
-                                @if (request()->language == 'en')
-                                    <td>{{ $document->title_en ?? '' }} </td>
-                                @else
-                                    <td>{{ $document->title ?? '' }} </td>
-                                @endif
-                                <td>
-                                    {{ $document->published_date ?? '' }}
-                                </td>
-                                <td>
-                                    <a href="{{ route('documentDetail', [$document->slug, 'language' => $language]) }}"
-                                        class="btn btn-sm">
-                                        <i class="fa fa-eye"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
+        <div class="doc-toolbar mt-3">
+            <p class="doc-toolbar__count mb-0">
+                {{ __('Total') }}: <strong>{{ \App\Support\NepaliNumber::localize($documents->total()) }}</strong>
+            </p>
+            <form action="{{ route('frontend.search') }}" method="get" class="doc-toolbar__search" role="search">
+                <input type="hidden" name="language" value="{{ $language }}">
+                <input type="search" name="keyword" value="{{ $keyword }}" required
+                    placeholder="{{ __('Search...') }}" aria-label="{{ __('Search') }}">
+                <button type="submit" aria-label="{{ __('Search') }}"><i class="fa fa-search"></i></button>
+            </form>
         </div>
+
+        @include('frontend.document.partials.table', ['documents' => $documents, 'showCategory' => true])
     </div>
 @endsection

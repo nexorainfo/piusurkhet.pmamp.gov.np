@@ -176,6 +176,7 @@ a {
 
 .carousel-height {
     height: 455px !important;
+    object-fit: cover; /* crop to fill instead of stretching the photo */
 }
 
 @media (max-width: 768px) {
@@ -576,7 +577,7 @@ a.more-link:hover {
 
 .table th,
 .table td {
-    text-align: center;
+    text-align: left;
     vertical-align: middle;
 }
 
@@ -600,21 +601,28 @@ a.more-link:hover {
 
 .breadcrumb-section {
     position: relative;
-    height: 150px;
+    display: flex;
+    align-items: center;
+    min-height: 150px;
+    padding: 24px 0;
     background: #cc1421;
 }
 
 .breadcrumb-overlay-text nav {
-    margin: auto;
-    max-width: max-content;
+    margin: 0;
 }
 
-.breadcrumb-overlay-text {
+/* Left-aligned page banner: title and breadcrumb line up with the page content. */
+/* Two classes so it beats Bootstrap's .text-center, which loads after this file. */
+.breadcrumb-section .breadcrumb-overlay-text {
+    position: relative;
     z-index: 20;
-    position: absolute;
-    transform: translate(-50%, -50%);
-    left: 50%;
-    top: 50%;
+    text-align: left !important;
+}
+
+.breadcrumb-overlay-text .breadcrumb {
+    justify-content: flex-start;
+    margin-bottom: 0;
 }
 
 .breadcrumb-title {

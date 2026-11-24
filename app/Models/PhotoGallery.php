@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class PhotoGallery extends Model
@@ -18,5 +19,11 @@ class PhotoGallery extends Model
     public function photos(): HasMany
     {
         return $this->hasMany(Photo::class);
+    }
+
+    /** The first photo of the album, used as its thumbnail. */
+    public function coverPhoto(): HasOne
+    {
+        return $this->hasOne(Photo::class)->oldestOfMany();
     }
 }

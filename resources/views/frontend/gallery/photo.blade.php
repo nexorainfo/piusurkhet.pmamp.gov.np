@@ -24,7 +24,7 @@
         </div>
     </section>
     <div class="container">
-        <h1 class="photo-title text-center mb-0 mt-4">
+        <h1 class="photo-title mb-0 mt-4">
             @if (request()->language == 'en')
                 {{ $photoGallery->title_en }}
             @else
@@ -37,8 +37,12 @@
                 <div class="border">
                     <div class="gallery-image">
                         <a class="#">
-                            <img src="{{ asset('storage/' . $photo->images) }}" alt="{{ $photoGallery->title_en }}"
-                                class="lightbox-trigger">
+                            <x-image :path="$photo->images" :widths="[320, 640, 960]"
+                                sizes="(min-width: 768px) 33vw, 100vw" :alt="$photoGallery->title_en"
+                                class="lightbox-trigger"
+                                :data-full="\App\Support\ResizedImage::canResize($photo->images)
+                                    ? \App\Support\ResizedImage::url($photo->images, 1920)
+                                    : asset('storage/' . $photo->images)" />
 
                         </a>
                     </div>
@@ -62,7 +66,7 @@
                 document.querySelectorAll(".lightbox-trigger").forEach(image => {
                     image.addEventListener("click", function() {
                         lightbox.style.display = "flex";
-                        lightboxImg.src = this.src;
+                        lightboxImg.src = this.dataset.full || this.currentSrc || this.src;
                     });
                 });
 
@@ -99,8 +103,9 @@
             }
 
             .lightbox-content {
-                max-width: 60%;
-                max-height: 60%;
+                max-width: 90%;
+                max-height: 90%;
+                object-fit: contain;
             }
 
             .close {

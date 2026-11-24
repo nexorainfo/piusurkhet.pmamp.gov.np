@@ -54,9 +54,9 @@
                                     <small>
                                         <i class="fa fa-clock-o"></i>
                                         @if (request()->language == 'en')
-                                            {{ $document->published_date }}
+                                            {{ $document->published_date_padded }}
                                         @else
-                                            {{ $document->published_date }}
+                                            {{ $document->published_date_padded }}
                                         @endif
                                     </small>
                                 </div>

@@ -29,8 +29,9 @@
             @foreach ($exEmployees as $employee)
                 <div class="col-md-3">
                     <div class="border">
-                        <img class="rounded" src="{{ $employee->photo }}" height="120" width="120"
-                            alt="{{ $employee->name ?? '' }}">
+                        <x-image :path="$employee->getRawOriginal('photo')" :widths="[160, 320]" sizes="120px"
+                            :fallback="asset('assets/backend/images/user_icon.jpg')" :alt="$employee->name ?? ''"
+                            class="rounded" width="120" height="120" style="object-fit: cover;" />
                         @if (request()->language == 'en')
                             <p>{{ $employee->name_en ?? '' }}</p>
                             <p>{{ $employee->designation ?? '' }}</p>

@@ -2,13 +2,18 @@
 
 use App\Http\Controllers\Admin\ImageController;
 use App\Http\Controllers\FrontendController;
+use App\Http\Controllers\ResizedImageController;
 use Illuminate\Support\Facades\Route;
 use League\CommonMark\Extension\FrontMatter\FrontMatterParser;
 
-Route::get('/', function () {
+// Resized WebP copies of uploaded images, made the first time each size is asked for.
+Route::get('storage/resized/{width}/{path}', ResizedImageController::class)
+    ->where(['width' => '[0-9]+', 'path' => '.+\.webp'])
+    ->name('image.resized');
+
+Route::get('/', function (\Illuminate\Http\Request $request) {
     if (config('default.dual_language')) {
-        $locale = app()->getLocale();
-        return redirect(route('welcome', ['language'=>$locale]));
+        return redirect(route('welcome', ['language' => \App\Support\SiteLanguage::fromRequest($request)]));
     } else {
         return redirect(route('welcome'));
     }

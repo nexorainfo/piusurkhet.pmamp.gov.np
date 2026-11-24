@@ -14,6 +14,7 @@ use App\Observers\MenuObserver;
 use App\Observers\OfficeDetailObserver;
 use App\Observers\OfficeSettingHeaderObserver;
 use App\Observers\SubDivisionEmployeeObserver;
+use App\Support\FrontendCache;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\ServiceProvider;
@@ -38,7 +39,7 @@ class AppServiceProvider extends ServiceProvider
         SubDivisionEmployee::observe(SubDivisionEmployeeObserver::class);
         DocumentCategory::observe(DocumentCategoryObserver::class);
         OfficeSettingHeader::observe(OfficeSettingHeaderObserver::class);
-
+        FrontendCache::flushOnModelChanges();
          if (app()->environment('production')) {
             URL::forceScheme('https');
         }

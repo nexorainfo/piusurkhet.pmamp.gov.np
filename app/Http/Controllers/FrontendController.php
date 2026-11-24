@@ -27,7 +27,7 @@ use App\Models\SubDivision\SubDivisionDocument;
 use App\Models\SubDivision\SubDivisionEmployee;
 use App\Models\VideoGallery;
 
-use Illuminate\Support\Facades\Cache;
+use App\Support\SiteLanguage;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Response;
@@ -43,25 +43,38 @@ class FrontendController extends BaseController
     {
 
         $officeDetail = OfficeDetail::whereShowOnIndex(1)->whereType('Introduction')->first();
-        $tickerFiles = Document::whereMarkAsNew(1)->orderBy('published_date')->get();
+        $tickerFiles = Document::whereStatus(1)
+            ->whereMarkAsNew(1)
+            ->orderByBsPublishedDateDesc()
+            ->limit(15)
+            ->get();
         $sliders = Slider::latest()->get();
+
+        // The homepage shows three categories, three documents per sub-category tab.
+        // Load just those instead of every document in every category.
         $categories = DocumentCategory::with([
             'documentCategories' => function ($query) {
                 $query->whereShowOnIndex(1)->orderBy('position');
             },
-            'documentCategories.documents' => function ($query) {
-                $query->whereStatus(1)->orderByDesc('published_date');
-            },
-            'mainDocuments' => function ($query) {
-                $query->whereStatus(1)->orderByDesc('published_date');
-            }
         ])
             ->whereShowOnIndex(1)
             ->whereNull('document_category_id')
             ->orderBy('position')
+            ->limit(3)
             ->get();
+
+        foreach ($categories as $category) {
+            foreach ($category->documentCategories as $subcategory) {
+                $subcategory->setRelation('documents', $subcategory->documents()
+                    ->whereStatus(1)
+                    ->orderByBsPublishedDateDesc()
+                    ->limit(3)
+                    ->get());
+            }
+        }
+
         $noticePopups = Document::with('files')->where('popUp', 1)->get();
-        $galleries = PhotoGallery::with('photos')->whereHas('photos')->limit(3)->latest()->get();
+        $galleries = PhotoGallery::with('coverPhoto')->whereHas('photos')->limit(3)->latest()->get();
         return view('frontend.index', compact('officeDetail', 'tickerFiles', 'sliders', 'categories', 'galleries', 'noticePopups'));
         if (config('default.subDivision')) {
             $subDivisions = SubDivision::latest()->get();
@@ -77,9 +90,28 @@ class FrontendController extends BaseController
         if (empty($keyword)) {
             return back();
         }
-        $documents = Document::search($keyword)->paginate(20);
+        // A plain database query: Scout's builder can't use the BS date ordering scope,
+        // and this way search doesn't depend on which Scout driver the server has set.
+        $documents = Document::query()
+            ->whereStatus(1)
+            ->where(function ($query) use ($keyword) {
+                foreach (['title', 'title_en', 'description', 'description_en', 'publisher', 'publisher_en'] as $column) {
+                    $query->orWhere($column, 'like', '%' . $keyword . '%');
+                }
+            })
+            ->with(['files', 'documentCategory', 'mainDocumentCategory'])
+            ->orderByBsPublishedDateDesc()
+            ->paginate(20)
+            ->withQueryString();
 
         return view('frontend.search.search_res', compact('keyword', 'documents'));
+    }
+
+    public function faq()
+    {
+        $faqs = Faq::latest()->get();
+
+        return view('frontend.faq', compact('faqs'));
     }
 
     public function officeDetails(OfficeDetail $officeDetail)
@@ -89,31 +121,43 @@ class FrontendController extends BaseController
 
     public function documentCategory(DocumentCategory $documentCategory)
     {
-
         $mainCategory = $documentCategory->parentCategory ?? $documentCategory;
+        $documentCategory->load(['documentCategories' => fn ($query) => $query->orderBy('position')]);
+        $keyword = trim((string) request('q'));
 
-        $documentCategory->load([
-            'mainDocuments' => function ($query) {
-                $query->with('mainDocumentCategory')->whereStatus(1)->orderByDesc('published_date');
-            },
-            'documents' => function ($query) {
-                $query->with('documentCategory')->whereStatus(1)->orderByDesc('published_date');
-            }
-        ]);
+        // A sub-category lists its own documents; a main category lists everything filed under it.
+        $relation = $documentCategory->documents()->whereStatus(1)->exists()
+            ? $documentCategory->documents()
+            : $documentCategory->mainDocuments();
 
-        return view('frontend.document.document', compact('documentCategory', 'mainCategory'));
+        $documents = $relation
+            ->with(['files', 'documentCategory'])
+            ->whereStatus(1)
+            ->when($keyword !== '', function ($query) use ($keyword) {
+                $query->where(function ($query) use ($keyword) {
+                    foreach (['title', 'title_en', 'publisher', 'publisher_en'] as $column) {
+                        $query->orWhere($column, 'like', '%' . $keyword . '%');
+                    }
+                });
+            })
+            ->orderByBsPublishedDateDesc()
+            ->paginate(25)
+            ->withQueryString();
+
+        return view('frontend.document.document', compact('documentCategory', 'mainCategory', 'documents', 'keyword'));
     }
 
     public function documentDetail(Document $document)
     {
-        $document->load('files');
+        $document->load('files', 'mainDocumentCategory', 'documentCategory');
 
         $relatedDocuments = Document::with('mainDocumentCategory')->where('id', '!=', $document->id)
+            ->whereStatus(1)
             ->where(function ($query) use ($document) {
                 $query->where('document_category_id', $document->document_category_id);
                 $query->where('main_document_category_id', $document->main_document_category_id);
             })
-            ->orderByDesc('published_date')
+            ->orderByBsPublishedDateDesc()
             ->limit(5)
             ->get();
 
@@ -128,7 +172,7 @@ class FrontendController extends BaseController
                 return view('frontend.contact');
                 break;
             case 'photoGallery':
-                $photoAlbums = PhotoGallery::with('photos')->latest()->get();
+                $photoAlbums = PhotoGallery::with('coverPhoto')->whereHas('photos')->latest()->get();
                 return view('frontend.gallery.gallery', compact('photoAlbums'));
                 break;
 
@@ -239,28 +283,21 @@ class FrontendController extends BaseController
 
 
 
-    public function languageChange($lang)
+    public function languageChange(string $lang)
     {
+        $lang = SiteLanguage::isSupported($lang) ? $lang : config('app.locale');
+        session([SiteLanguage::SESSION_KEY => $lang]);
 
-        if (config('default.dual_language')) {
-            if (!empty($lang) && in_array($lang, config('app.locales'))) {
-                Cache::put('language', $lang, 60 * 60 * 12);
-                app()->setLocale($lang);
-            } else {
-                Cache::put('language', 'ne', 60 * 60 * 12);
-                app()->setLocale('ne');
-            }
+        // Back to the page the visitor was on, with ?language= swapped (keeping page=, q= etc.).
+        $previous = parse_url(url()->previous());
+        if (($previous['host'] ?? null) !== request()->getHost()) {
+            return redirect()->route('welcome', ['language' => $lang]);
         }
-        $url = url()->previous();
-        $route = app('router')->getRoutes($url)->match(app('request')->create($url))->getName();
-        if ($route == 'welcome') {
-            return redirect(\route($route, ['language' => $lang]));
-        } else {
-            $count = Str::length($url);
 
-            $url = Str::substr($url, 0, $count - 2);
-            return redirect($url . $lang ?? 'ne');
-        }
+        parse_str($previous['query'] ?? '', $query);
+        $query['language'] = $lang;
+
+        return redirect(url($previous['path'] ?? '/') . '?' . http_build_query($query));
     }
 
 

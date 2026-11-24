@@ -29,8 +29,8 @@
                 <div class="border">
                     <div class="gallery-image">
                        <a href="{{ route('photoGalleryDetails', [$photoAlbum->slug, 'language' => $language]) }}">
-                            <img src="{{ asset('storage/' . $photoAlbum->photos->first()->images) }}"
-                                alt={{ $photoAlbum->title_en }}>
+                            <x-image :path="$photoAlbum->coverPhoto?->images" :widths="[320, 640, 960]"
+                                sizes="(min-width: 768px) 33vw, 100vw" :alt="$photoAlbum->title_en" />
                         </a>
                     </div>
 

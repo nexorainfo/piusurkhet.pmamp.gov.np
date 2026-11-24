@@ -1,0 +1,531 @@
+/* Document lists (category pages, search) and the document detail page. */
+
+/* ---------- Sub-category chips + toolbar ---------- */
+.doc-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.doc-chip {
+    padding: 6px 14px;
+    border: 1px solid #d6e2f3;
+    border-radius: 100px;
+    background: #fff;
+    color: var(--site-theme, #2460b9);
+    font-size: 15px;
+    font-weight: 500;
+    transition: 200ms ease-in-out;
+}
+
+.doc-chip:hover,
+.doc-chip.is-active {
+    border-color: var(--site-theme, #2460b9);
+    background: var(--site-theme, #2460b9);
+    color: #fff;
+}
+
+.doc-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.doc-toolbar__count {
+    color: #555;
+}
+
+.doc-toolbar__search {
+    display: flex;
+    align-items: center;
+    min-width: 260px;
+    border: 1px solid #dcdcdc;
+    border-radius: 100px;
+    background: #fff;
+    overflow: hidden;
+}
+
+.doc-toolbar__search input {
+    flex: 1;
+    min-width: 0;
+    height: 40px;
+    padding: 0 16px;
+    border: 0;
+    outline: none;
+    background: transparent;
+}
+
+.doc-toolbar__search button {
+    width: 44px;
+    height: 40px;
+    border: 0;
+    background: transparent;
+    color: var(--site-theme, #2460b9);
+}
+
+/* ---------- Document table ---------- */
+.doc-list {
+    border: 1px solid #e6ecf5;
+    border-radius: 8px;
+    background: #fff;
+    overflow: hidden;
+}
+
+.doc-list__table thead th {
+    padding: 12px;
+    border-bottom: 0;
+    background: var(--site-dropdown-bg, #eef5ff);
+    color: #333;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.doc-list__table tbody td {
+    padding: 12px;
+    border-color: #eef1f6;
+}
+
+/* style.css centres every table cell; titles read better left-aligned. */
+.doc-list__table th,
+.doc-list__table td {
+    text-align: left;
+    vertical-align: middle;
+}
+
+.doc-list__table .doc-list__sn {
+    text-align: center;
+}
+
+.doc-list__table .doc-list__action {
+    text-align: right;
+}
+
+.doc-list__table tbody tr:hover {
+    background: #fafcff;
+}
+
+.doc-list__sn {
+    width: 60px;
+    text-align: center;
+    color: #777;
+}
+
+.doc-list__table .doc-list__title {
+    white-space: normal; /* style.css keeps table cells on one line; long titles must wrap */
+}
+
+.doc-list__title a {
+    color: #1d1d1d;
+    font-weight: 500;
+}
+
+.doc-list__title a:hover {
+    color: var(--site-theme, #2460b9);
+}
+
+.doc-list__badge {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 1px 8px;
+    border-radius: 100px;
+    background: #dc143c;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    vertical-align: 2px;
+}
+
+.doc-list__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 14px;
+    margin-top: 4px;
+    color: #777;
+    font-size: 13px;
+}
+
+.doc-list__meta i {
+    margin-right: 2px;
+}
+
+.doc-list__date {
+    width: 150px;
+    white-space: nowrap;
+    color: #444;
+}
+
+.doc-list__date i {
+    color: #999;
+}
+
+.doc-list__files {
+    width: 150px;
+    white-space: nowrap;
+}
+
+.doc-list__file {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin: 2px 4px 2px 0;
+    padding: 2px 8px;
+    border: 1px solid #e3e3e3;
+    border-radius: 4px;
+    color: #555;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.doc-list__file:hover {
+    border-color: currentColor;
+}
+
+.doc-list__file--pdf {
+    color: #d32f2f;
+}
+
+.doc-list__file--jpg,
+.doc-list__file--jpeg,
+.doc-list__file--png,
+.doc-list__file--webp {
+    color: #2e7d32;
+}
+
+.doc-list__file--doc,
+.doc-list__file--docx {
+    color: #1565c0;
+}
+
+.doc-list__file--xls,
+.doc-list__file--xlsx {
+    color: #1b5e20;
+}
+
+.doc-list__action {
+    width: 110px;
+    text-align: right;
+}
+
+.doc-list__view {
+    display: inline-block;
+    padding: 5px 14px;
+    border-radius: 4px;
+    background: var(--site-theme, #2460b9);
+    color: #fff;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.doc-list__view:hover {
+    background: var(--site-theme-dark, #264f8b);
+    color: #fff;
+}
+
+/* Phones: each document becomes a card (title, then date + view button, then files). */
+@media (max-width: 767.98px) {
+    .doc-list__table thead,
+    .doc-list__table .doc-list__sn {
+        display: none;
+    }
+
+    .doc-list__table,
+    .doc-list__table tbody {
+        display: block;
+        width: 100%;
+    }
+
+    .doc-list__table tbody tr {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        gap: 8px 12px;
+        padding: 12px 14px;
+        border-bottom: 1px solid #eef1f6;
+    }
+
+    .doc-list__table tbody td {
+        display: block;
+        width: auto;
+        padding: 0;
+        border: 0;
+    }
+
+    .doc-list__table .doc-list__title,
+    .doc-list__table .doc-list__files {
+        grid-column: 1 / -1;
+    }
+
+    .doc-list__table .doc-list__files:has(.text-muted) {
+        display: none;
+    }
+
+    .doc-list__table .doc-list__date {
+        grid-row: 2;
+        grid-column: 1;
+        font-size: 14px;
+    }
+
+    .doc-list__table .doc-list__action {
+        grid-row: 2;
+        grid-column: 2;
+    }
+
+    .doc-list__table .doc-list__files {
+        grid-row: 3;
+    }
+
+    .doc-list__table td[colspan] {
+        grid-column: 1 / -1;
+    }
+
+    .doc-toolbar__search {
+        width: 100%;
+    }
+}
+
+/* Pagination: the total is already shown above the list, so hide Laravel's
+   English "Showing x to y of z results" line and centre the page links. */
+.doc-pagination nav > div:last-child {
+    justify-content: center !important;
+}
+
+.doc-pagination nav p.small {
+    display: none;
+}
+
+.doc-pagination .page-link {
+    color: var(--site-theme, #2460b9);
+}
+
+.doc-pagination .page-item.active .page-link {
+    border-color: var(--site-theme, #2460b9);
+    background: var(--site-theme, #2460b9);
+    color: #fff;
+}
+
+/* ---------- Detail page ---------- */
+.doc-title {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.35;
+    color: #1d1d1d;
+    text-align: left;
+}
+
+.doc-facts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin-bottom: 16px;
+    padding: 14px 16px;
+    border: 1px solid #e6ecf5;
+    border-radius: 8px;
+    background: var(--site-dropdown-bg, #eef5ff);
+}
+
+.doc-facts dt {
+    margin-bottom: 2px;
+    color: #666;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.doc-facts dd {
+    margin: 0;
+    color: #1d1d1d;
+    font-weight: 600;
+}
+
+.doc-share {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    color: #666;
+}
+
+.doc-share__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 0;
+    border-radius: 50%;
+    color: #fff;
+}
+
+.doc-share__btn:hover {
+    color: #fff;
+    opacity: 0.85;
+}
+
+.doc-share__btn--facebook {
+    background: #1877f2;
+}
+
+.doc-share__btn--twitter {
+    background: #111;
+}
+
+.doc-share__btn--whatsapp {
+    background: #25d366;
+}
+
+.doc-share__btn--copy {
+    background: #6c757d;
+}
+
+.doc-share__btn--copy.is-copied {
+    background: #2e7d32;
+}
+
+.doc-attachments {
+    margin-bottom: 20px;
+    border: 1px solid #e6ecf5;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.doc-attachments__title {
+    margin: 0;
+    padding: 10px 16px;
+    background: #f7f9fc;
+    font-size: 17px;
+    font-weight: 600;
+}
+
+.doc-attachment {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-top: 1px solid #eef1f6;
+}
+
+.doc-attachment__icon {
+    font-size: 28px;
+}
+
+.doc-attachment__info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.doc-attachment__name {
+    overflow: hidden;
+    font-weight: 500;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.doc-attachment__actions {
+    display: flex;
+    gap: 8px;
+}
+
+.doc-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border: 1px solid var(--site-theme, #2460b9);
+    border-radius: 4px;
+    background: var(--site-theme, #2460b9);
+    color: #fff;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.doc-btn:hover {
+    color: #fff;
+    opacity: 0.9;
+}
+
+.doc-btn--outline {
+    background: #fff;
+    color: var(--site-theme, #2460b9);
+}
+
+.doc-btn--outline:hover {
+    color: var(--site-theme, #2460b9);
+    background: var(--site-dropdown-bg, #eef5ff);
+}
+
+.doc-description {
+    margin-bottom: 20px;
+    line-height: 1.7;
+}
+
+.doc-preview {
+    display: block;
+    width: 100%;
+    height: 80vh;
+    min-height: 500px;
+    margin-bottom: 20px;
+    border: 1px solid #e6ecf5;
+    border-radius: 8px;
+}
+
+.doc-preview-image {
+    margin-bottom: 20px;
+}
+
+.doc-preview-image img {
+    width: 100%;
+    height: auto;
+    border: 1px solid #e6ecf5;
+    border-radius: 8px;
+}
+
+.doc-related {
+    display: block;
+    margin-bottom: 8px;
+    padding: 10px 12px;
+    border: 1px solid #e6ecf5;
+    border-left: 3px solid var(--site-theme, #2460b9);
+    border-radius: 6px;
+    background: #fff;
+    color: #1d1d1d;
+    transition: 200ms ease-in-out;
+}
+
+.doc-related:hover {
+    background: var(--site-dropdown-bg, #eef5ff);
+    color: var(--site-theme, #2460b9);
+}
+
+.doc-related__title {
+    display: block;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+.doc-related small {
+    color: #777;
+}
+
+@media (max-width: 575.98px) {
+    .doc-title {
+        font-size: 22px;
+    }
+
+    .doc-attachment {
+        flex-wrap: wrap;
+    }
+
+    .doc-attachment__actions {
+        width: 100%;
+    }
+
+    .doc-preview {
+        height: 60vh;
+        min-height: 360px;
+    }
+}

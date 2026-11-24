@@ -46,9 +46,9 @@
                                         </h6>
                                         <p class="mt-2">
                                             @if (request()->language == 'en')
-                                                {{ $document->published_date }} | {{ $document->publisher_en }}
+                                                {{ $document->published_date_padded }} | {{ $document->publisher_en }}
                                             @else
-                                                {{ $document->published_date }} | {{ $document->publisher }}
+                                                {{ $document->published_date_padded }} | {{ $document->publisher }}
                                             @endif
                                         </p>
                                     </a>
@@ -68,11 +68,11 @@
                                     class="card-01 mb-2 border">
                                     @if (request()->language == 'en')
                                         <h6 class="heading">{{ $document->title_en }}</h6>
-                                        <p class="mt-2">{{ $document->published_date }} |
+                                        <p class="mt-2">{{ $document->published_date_padded }} |
                                             {{ $document->publisher_en }}</p>
                                     @else
                                         <h6 class="heading">{{ $document->title }}</h6>
-                                        <p class="mt-2">{{ $document->published_date }} |
+                                        <p class="mt-2">{{ $document->published_date_padded }} |
                                             {{ $document->publisher }}</p>
                                     @endif
                                 </a>
